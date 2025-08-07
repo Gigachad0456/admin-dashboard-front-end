@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      };
+    </script>
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      .skeleton { @apply bg-gray-200 dark:bg-gray-700 animate-pulse rounded; }
+      /* Ensure dropdown is visible above other elements */
+      .profile-wrapper { position: relative; }
+      #profileDropdown { transition: opacity 0.2s ease, transform 0.2s ease; }
+      #profileDropdown.hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+      #profileDropdown:not(.hidden) { opacity: 1; transform: translateY(0); }
+    </style>
+  </head>
+  <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-white">
+    <!-- Mobile Topbar -->
+    <div class="md:hidden flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow">
+      <button id="toggleSidebar" class="text-gray-600 dark:text-white">☰</button>
+      <div>
+        <button id="toggleDark" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">🌓</button>
+      </div>
+    </div>
+
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="w-64 bg-white dark:bg-gray-800 shadow-md hidden md:block transition-all duration-300">
+        <div class="p-6 text-xl font-bold border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+          Admin Panel
+          <button id="collapseSidebar" class="md:block hidden text-gray-600 dark:text-white">←</button>
+        </div>
+        <nav class="p-4 space-y-2">
+          <a href="index.html" class="flex items-center gap-2 p-2 rounded bg-blue-100 dark:bg-blue-900 text-blue-600">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+            <span>Dashboard</span>
+          </a>
+          <a href="users.html" class="flex items-center gap-2 p-2 rounded hover:bg-blue-50 dark:hover:bg-gray-700">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <span>Users</span>
+          </a>
+          <a href="orders.html" class="flex items-center gap-2 p-2 rounded hover:bg-blue-50 dark:hover:bg-gray-700">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0021.25 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <span>Orders</span>
+          </a>
+          <a href="settings.html" class="flex items-center gap-2 p-2 rounded hover:bg-blue-50 dark:hover:bg-gray-700">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84a.49.49 0 00-.49.41l-.36-2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.488.488 0 00-.59.22l-1.92 3.32a.49.49 0 00.12.61l2.03 1.58c-.04.3-.06.62-.06.94 0 .32.02.64.06.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.14.24.43.36.71.26l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54a.484.484 0 00.48.41h3.84a.49.49 0 00.49-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.28.11.57-.02.71-.26l1.92-3.32a.49.49 0 00-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            <span>Settings</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-6">
+        <!-- Top bar -->
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-semibold">Dashboard</h1>
+          <div class="flex items-center gap-3">
+            <button id="notifications" class="relative text-gray-600 dark:text-white">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-1.1-.9-2-2-2s-2 .9-2 2v.68C6.63 5.36 5 7.92 5 11v5l-2 2v1h18v-1l-2-2z"/></svg>
+              <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            <div class="profile-wrapper">
+              <button id="profileToggle" class="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded">
+                <span class="text-sm">Hello, Admin</span>
+                <img src="https://i.pravatar.cc/40" alt="Avatar" class="w-10 h-10 rounded-full" />
+              </button>
+              <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg z-50">
+                <a href="settings.html" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Profile</a>
+                <a href="#" class="block px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">Logout</a>
+              </div>
+            </div>
+            <button id="toggleDarkDesktop" class="hidden md:inline px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">🌓</button>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-700 dark:to-gray-800 p-4 rounded-lg shadow transform hover:scale-105 transition-transform duration-200">
+            <div class="flex items-center gap-2">
+              <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+              <h2 class="text-lg font-semibold">Users</h2>
+            </div>
+            <p id="usersCount" class="text-2xl font-bold mt-2 skeleton h-8 w-16"></p>
+          </div>
+          <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-gray-700 dark:to-gray-800 p-4 rounded-lg shadow transform hover:scale-105 transition-transform duration-200">
+            <div class="flex items-center gap-2">
+              <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0021.25 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+              <h2 class="text-lg font-semibold">Sales</h2>
+            </div>
+            <p id="salesCount" class="text-2xl font-bold mt-2 skeleton h-8 w-16"></p>
+          </div>
+          <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-gray-700 dark:to-gray-800 p-4 rounded-lg shadow transform hover:scale-105 transition-transform duration-200">
+            <div class="flex items-center gap-2">
+              <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>
+              <h2 class="text-lg font-semibold">Revenue</h2>
+            </div>
+            <p id="revenueCount" class="text-2xl font-bold mt-2 skeleton h-8 w-16"></p>
+          </div>
+        </div>
+
+        <!-- Chart Filter -->
+        <div class="mb-4">
+          <label for="chartFilter" class="text-sm font-medium">Filter Data:</label>
+          <select id="chartFilter" class="ml-2 p-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700">
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold mb-2">User Growth</h2>
+            <canvas id="userChart" height="200"></canvas>
+          </div>
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h2 class="text-lg font-semibold mb-2">Revenue Trend</h2>
+            <canvas id="revenueChart" height="200"></canvas>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow mb-6 overflow-x-auto">
+          <h2 class="text-lg font-semibold mb-4">Recent Orders</h2>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-gray-300 dark:border-gray-600">
+                <th class="py-2">Order ID</th>
+                <th class="py-2">Customer</th>
+                <th class="py-2">Status</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTable">
+              <tr class="border-b border-gray-200 dark:border-gray-700">
+                <td class="py-2"><div class="skeleton h-4 w-16"></div></td>
+                <td class="py-2"><div class="skeleton h-4 w-32"></div></td>
+                <td class="py-2"><div class="skeleton h-4 w-24"></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      // Load dark mode preference
+      function loadDarkMode() {
+        if (localStorage.getItem('darkMode') === 'enabled') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+
+      // Dark mode toggle
+      function darkToggle() {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('darkMode', document.documentElement.classList.contains('dark') ? 'enabled' : 'disabled');
+        updateCharts();
+      }
+
+      // Sidebar toggle
+      document.getElementById("toggleSidebar").addEventListener("click", () => {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("hidden");
+      });
+
+      // Collapse sidebar
+      document.getElementById("collapseSidebar")?.addEventListener("click", () => {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("w-64");
+        sidebar.classList.toggle("w-16");
+        sidebar.querySelectorAll("nav a span").forEach(el => el.classList.toggle("hidden"));
+      });
+
+      // Profile dropdown hover
+      const profileWrapper = document.querySelector('.profile-wrapper');
+      const profileDropdown = document.getElementById("profileDropdown");
+
+      profileWrapper.addEventListener("mouseenter", () => {
+        profileDropdown.classList.remove("hidden");
+      });
+
+      profileWrapper.addEventListener("mouseleave", () => {
+        profileDropdown.classList.add("hidden");
+      });
+
+      // Notifications
+      document.getElementById("notifications").addEventListener("click", () => {
+        alert("New order received! Check the Orders page.");
+      });
+
+      document.getElementById("toggleDark").addEventListener("click", darkToggle);
+      document.getElementById("toggleDarkDesktop").addEventListener("click", darkToggle);
+
+      // Load data from localStorage
+      let adminData = JSON.parse(localStorage.getItem('adminData')) || {
+        users: [
+          { id: "U001", name: "John Doe", email: "john@example.com", role: "Customer", status: "Active" },
+          { id: "U002", name: "Jane Smith", email: "jane@example.com", role: "Customer", status: "Inactive" },
+          { id: "U003", name: "Mike Brown", email: "mike@example.com", role: "Admin", status: "Active" },
+          { id: "U004", name: "Sarah Wilson", email: "sarah@example.com", role: "Customer", status: "Active" },
+        ],
+        orders: [
+          { id: "#001", customer: "John Doe", status: "Completed", total: "$150.00", date: "2025-08-01" },
+          { id: "#002", customer: "Jane Smith", status: "Pending", total: "$89.99", date: "2025-08-02" },
+          { id: "#003", customer: "Mike Brown", status: "Cancelled", total: "$45.50", date: "2025-08-03" },
+          { id: "#004", customer: "Sarah Wilson", status: "Completed", total: "$200.00", date: "2025-08-04" },
+        ]
+      };
+
+      // Calculate summary data
+      function getSummaryData() {
+        const usersCount = adminData.users.length;
+        const salesCount = adminData.orders.length;
+        const revenueCount = adminData.orders
+          .filter(order => order.status === "Completed")
+          .reduce((sum, order) => sum + parseFloat(order.total.replace('$', '')), 0)
+          .toFixed(2);
+        return { users: usersCount, sales: salesCount, revenue: revenueCount };
+      }
+
+      // Populate cards
+      function updateCards() {
+        const summary = getSummaryData();
+        document.getElementById("usersCount").textContent = summary.users;
+        document.getElementById("salesCount").textContent = summary.sales;
+        document.getElementById("revenueCount").textContent = `$${summary.revenue}`;
+      }
+
+      // Fill table
+      function renderOrdersTable() {
+        const table = document.getElementById("ordersTable");
+        table.innerHTML = "";
+        adminData.orders.slice(0, 3).forEach(order => {
+          const row = document.createElement("tr");
+          row.classList.add("border-b", "border-gray-200", "dark:border-gray-700");
+          row.innerHTML = `
+            <td class="py-2">${order.id}</td>
+            <td class="py-2">${order.customer}</td>
+            <td class="py-2 ${getStatusClass(order.status)}">${order.status}</td>
+          `;
+          table.appendChild(row);
+        });
+      }
+
+      function getStatusClass(status) {
+        if (status === "Completed") return "text-green-500";
+        if (status === "Pending") return "text-yellow-500";
+        if (status === "Cancelled") return "text-red-500";
+        return "";
+      }
+
+      // Chart Data
+      function getChartData(filter) {
+        const userCounts = {};
+        const revenueByPeriod = {};
+        const today = new Date();
+        const labels = [];
+
+        if (filter === 'monthly') {
+          for (let i = 5; i >= 0; i--) {
+            const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+            const label = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+            labels.push(label);
+            userCounts[label] = 0;
+            revenueByPeriod[label] = 0;
+          }
+        } else if (filter === 'quarterly') {
+          for (let i = 3; i >= 0; i--) {
+            const quarter = Math.floor((today.getMonth() + 3 - i * 3) / 3) % 4 + 1;
+            const year = today.getFullYear() - (i > Math.floor(today.getMonth() / 3) ? 1 : 0);
+            const label = `Q${quarter} ${year}`;
+            labels.push(label);
+            userCounts[label] = 0;
+            revenueByPeriod[label] = 0;
+          }
+        } else if (filter === 'yearly') {
+          for (let i = 2; i >= 0; i--) {
+            const year = today.getFullYear() - i;
+            labels.push(year.toString());
+            userCounts[year] = 0;
+            revenueByPeriod[year] = 0;
+          }
+        }
+
+        adminData.users.forEach(user => {
+          const date = new Date(user.id.slice(1) + '-01-01'); // Simplified: use user ID as year
+          let key;
+          if (filter === 'monthly') {
+            key = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+          } else if (filter === 'quarterly') {
+            const quarter = Math.floor((date.getMonth() + 3) / 3);
+            key = `Q${quarter} ${date.getFullYear()}`;
+          } else {
+            key = date.getFullYear().toString();
+          }
+          if (userCounts[key] !== undefined) {
+            userCounts[key]++;
+          }
+        });
+
+        adminData.orders.forEach(order => {
+          if (order.status === "Completed") {
+            const date = new Date(order.date);
+            let key;
+            if (filter === 'monthly') {
+              key = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+            } else if (filter === 'quarterly') {
+              const quarter = Math.floor((date.getMonth() + 3) / 3);
+              key = `Q${quarter} ${date.getFullYear()}`;
+            } else {
+              key = date.getFullYear().toString();
+            }
+            if (revenueByPeriod[key] !== undefined) {
+              revenueByPeriod[key] += parseFloat(order.total.replace('$', ''));
+            }
+          }
+        });
+
+        return {
+          labels,
+          userData: labels.map(label => userCounts[label] || 0),
+          revenueData: labels.map(label => revenueByPeriod[label] || 0)
+        };
+      }
+
+      let userChart, revenueChart;
+
+      function updateCharts() {
+        const filter = document.getElementById("chartFilter").value;
+        const chartData = getChartData(filter);
+        const isDark = document.documentElement.classList.contains('dark');
+
+        if (userChart) userChart.destroy();
+        if (revenueChart) revenueChart.destroy();
+
+        userChart = new Chart(document.getElementById("userChart"), {
+          type: 'line',
+          data: {
+            labels: chartData.labels,
+            datasets: [{
+              label: 'User Growth',
+              data: chartData.userData,
+              borderColor: isDark ? '#93c5fd' : '#3b82f6',
+              backgroundColor: isDark ? 'rgba(147, 197, 253, 0.2)' : 'rgba(59, 130, 246, 0.2)',
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { labels: { color: isDark ? '#ffffff' : '#374151' } }
+            },
+            scales: {
+              x: { ticks: { color: isDark ? '#ffffff' : '#374151' } },
+              y: { ticks: { color: isDark ? '#ffffff' : '#374151' }, beginAtZero: true }
+            }
+          }
+        });
+
+        revenueChart = new Chart(document.getElementById("revenueChart"), {
+          type: 'bar',
+          data: {
+            labels: chartData.labels,
+            datasets: [{
+              label: 'Revenue ($)',
+              data: chartData.revenueData,
+              backgroundColor: isDark ? '#a5b4fc' : '#8b5cf6',
+              borderColor: isDark ? '#a5b4fc' : '#8b5cf6',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { labels: { color: isDark ? '#ffffff' : '#374151' } }
+            },
+            scales: {
+              x: { ticks: { color: isDark ? '#ffffff' : '#374151' } },
+              y: { ticks: { color: isDark ? '#ffffff' : '#374151' }, beginAtZero: true }
+            }
+          }
+        });
+      }
+
+      // Chart filter change
+      document.getElementById("chartFilter").addEventListener("change", updateCharts);
+
+      // Initialize
+      loadDarkMode();
+      setTimeout(() => {
+        updateCards();
+        renderOrdersTable();
+        updateCharts();
+      }, 1000);
+    </script>
+  </body>
+</html>

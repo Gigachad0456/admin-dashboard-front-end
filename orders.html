@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+      };
+    </script>
+    <style>
+      body { font-family: 'Inter', sans-serif; }
+      .skeleton { @apply bg-gray-200 dark:bg-gray-700 animate-pulse rounded; }
+    </style>
+  </head>
+  <body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-white">
+    <!-- Mobile Topbar -->
+    <div class="md:hidden flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow">
+      <button id="toggleSidebar" class="text-gray-600 dark:text-white">☰</button>
+      <div>
+        <button id="toggleDark" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">🌓</button>
+      </div>
+    </div>
+
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="w-64 bg-white dark:bg-gray-800 shadow-md hidden md:block transition-all duration-300">
+        <div class="p-6 text-xl font-bold border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+          Admin Panel
+          <button id="collapseSidebar" class="md:block hidden text-gray-600 dark:text-white">←</button>
+        </div>
+        <nav class="p-4 space-y-2">
+          <a href="index.html" class="flex items-center gap-2 p-2 rounded hover:bg-blue-50 dark:hover:bg-gray-700">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+            <span>Dashboard</span>
+          </a>
+          <a href="users.html" class="flex items-center gap-2 p-2 rounded hover:bg-blue-50 dark:hover:bg-gray-700">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <span>Users</span>
+          </a>
+          <a href="orders.html" class="flex items-center gap-2 p-2 rounded bg-blue-100 dark:bg-blue-900 text-blue-600">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0021.25 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            <span>Orders</span>
+          </a>
+          <a href="settings.html" class="flex items-center gap-2 p-2 rounded hover:bg-blue-50 dark:hover:bg-gray-700">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84a.49.49 0 00-.49.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96a.488.488 0 00-.59.22l-1.92 3.32a.49.49 0 00.12.61l2.03 1.58c-.04.3-.06.62-.06.94 0 .32.02.64.06.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.14.24.43.36.71.26l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54a.484.484 0 00.48.41h3.84a.49.49 0 00.49-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.28.11.57-.02.71-.26l1.92-3.32a.49.49 0 00-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            <span>Settings</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 p-6">
+        <!-- Top bar -->
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-semibold">Orders</h1>
+          <div class="flex items-center gap-3">
+            <button id="notifications" class="relative text-gray-600 dark:text-white">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-1.1-.9-2-2-2s-2 .9-2 2v.68C6.63 5.36 5 7.92 5 11v5l-2 2v1h18v-1l-2-2z"/></svg>
+              <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            <div class="relative">
+              <button id="profileToggle" class="flex items-center gap-2">
+                <span class="text-sm">Hello, Admin</span>
+                <img src="https://i.pravatar.cc/40" alt="Avatar" class="w-10 h-10 rounded-full" />
+              </button>
+              <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded shadow-lg">
+                <a href="settings.html" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Profile</a>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Logout</a>
+              </div>
+            </div>
+            <button id="toggleDarkDesktop" class="hidden md:inline px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">🌓</button>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow overflow-x-auto">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-semibold">All Orders</h2>
+            <div class="flex gap-2">
+              <input type="text" id="searchTable" placeholder="Search..." class="p-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700" />
+              <button id="addOrder" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Add Order</button>
+            </div>
+          </div>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left border-b border-gray-300 dark:border-gray-600">
+                <th class="py-2 cursor-pointer" onclick="sortTable('id')">Order ID</th>
+                <th class="py-2 cursor-pointer" onclick="sortTable('customer')">Customer</th>
+                <th class="py-2 cursor-pointer" onclick="sortTable('status')">Status</th>
+                <th class="py-2 cursor-pointer" onclick="sortTable('total')">Total</th>
+                <th class="py-2 cursor-pointer" onclick="sortTable('date')">Date</th>
+                <th class="py-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTable">
+              <tr class="border-b border-gray-200 dark:border-gray-700">
+                <td class="py-2"><div class="skeleton h-4 w-16"></div></td>
+                <td class="py-2"><div class="skeleton h-4 w-32"></div></td>
+                <td class="py-2"><div class="skeleton h-4 w-24"></div></td>
+                <td class="py-2"><div class="skeleton h-4 w-20"></div></td>
+                <td class="py-2"><div class="skeleton h-4 w-28"></div></td>
+                <td class="py-2"><div class="skeleton h-4 w-24"></div></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="mt-4 flex justify-between">
+            <button id="prevPage" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded">Previous</button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button id="nextPage" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded">Next</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal for Create/Update Order -->
+    <div id="orderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 id="modalTitle" class="text-lg font-semibold mb-4">Add Order</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium">Order ID</label>
+            <input type="text" id="orderId" class="mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Customer</label>
+            <input type="text" id="orderCustomer" class="mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Status</label>
+            <select id="orderStatus" class="mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700">
+              <option value="Completed">Completed</option>
+              <option value="Pending">Pending</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Total ($)</label>
+            <input type="text" id="orderTotal" class="mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700" placeholder="e.g., 100.00" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Date</label>
+            <input type="date" id="orderDate" class="mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700" />
+          </div>
+          <div id="errorMessage" class="text-red-500 text-sm hidden"></div>
+          <div class="flex justify-end gap-2">
+            <button id="cancelModal" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500">Cancel</button>
+            <button id="saveOrder" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Load dark mode preference
+      function loadDarkMode() {
+        if (localStorage.getItem('darkMode') === 'enabled') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+
+      // Dark mode toggle
+      function darkToggle() {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('darkMode', document.documentElement.classList.contains('dark') ? 'enabled' : 'disabled');
+      }
+
+      // Sidebar toggle
+      document.getElementById("toggleSidebar").addEventListener("click", () => {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("hidden");
+      });
+
+      // Collapse sidebar
+      document.getElementById("collapseSidebar")?.addEventListener("click", () => {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("w-64");
+        sidebar.classList.toggle("w-16");
+        sidebar.querySelectorAll("nav a span").forEach(el => el.classList.toggle("hidden"));
+      });
+
+      // Profile dropdown
+      document.getElementById("profileToggle").addEventListener("click", () => {
+        document.getElementById("profileDropdown").classList.toggle("hidden");
+      });
+
+      // Notifications
+      document.getElementById("notifications").addEventListener("click", () => {
+        alert("New order received! Check the Orders page.");
+      });
+
+      document.getElementById("toggleDark").addEventListener("click", darkToggle);
+      document.getElementById("toggleDarkDesktop").addEventListener("click", darkToggle);
+
+      // Load data from localStorage
+      let adminData = JSON.parse(localStorage.getItem('adminData')) || {
+        users: [
+          { id: "U001", name: "John Doe", email: "john@example.com", role: "Customer", status: "Active" },
+          { id: "U002", name: "Jane Smith", email: "jane@example.com", role: "Customer", status: "Inactive" },
+          { id: "U003", name: "Mike Brown", email: "mike@example.com", role: "Admin", status: "Active" },
+          { id: "U004", name: "Sarah Wilson", email: "sarah@example.com", role: "Customer", status: "Active" },
+        ],
+        orders: [
+          { id: "#001", customer: "John Doe", status: "Completed", total: "$150.00", date: "2025-08-01" },
+          { id: "#002", customer: "Jane Smith", status: "Pending", total: "$89.99", date: "2025-08-02" },
+          { id: "#003", customer: "Mike Brown", status: "Cancelled", total: "$45.50", date: "2025-08-03" },
+          { id: "#004", customer: "Sarah Wilson", status: "Completed", total: "$200.00", date: "2025-08-04" },
+        ]
+      };
+
+      let currentPage = 1;
+      const rowsPerPage = 5;
+      let currentSort = { column: 'id', asc: true };
+      let editingOrderId = null;
+
+      function saveData() {
+        localStorage.setItem('adminData', JSON.stringify(adminData));
+      }
+
+      function renderTable(data, page = 1) {
+        const table = document.getElementById("ordersTable");
+        table.innerHTML = "";
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedData = data.slice(start, end);
+
+        paginatedData.forEach(item => {
+          const row = document.createElement("tr");
+          row.classList.add("border-b", "border-gray-200", "dark:border-gray-700");
+          row.innerHTML = `
+            <td class="py-2">${item.id}</td>
+            <td class="py-2">${item.customer}</td>
+            <td class="py-2 ${getStatusClass(item.status)}">${item.status}</td>
+            <td class="py-2">${item.total}</td>
+            <td class="py-2">${item.date}</td>
+            <td class="py-2">
+              <button onclick="editOrder('${item.id}')" class="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Edit</button>
+              <button onclick="deleteOrder('${item.id}')" class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+            </td>
+          `;
+          table.appendChild(row);
+        });
+
+        document.getElementById("pageInfo").textContent = `Page ${page} of ${Math.ceil(data.length / rowsPerPage)}`;
+      }
+
+      function getStatusClass(status) {
+        if (status === "Completed") return "text-green-500";
+        if (status === "Pending") return "text-yellow-500";
+        if (status === "Cancelled") return "text-red-500";
+        return "";
+      }
+
+      document.getElementById("searchTable").addEventListener("input", (e) => {
+        const search = e.target.value.toLowerCase();
+        const filteredData = adminData.orders.filter(order => 
+          order.id.toLowerCase().includes(search) || 
+          order.customer.toLowerCase().includes(search) || 
+          order.status.toLowerCase().includes(search)
+        );
+        currentPage = 1;
+        renderTable(filteredData, currentPage);
+      });
+
+      document.getElementById("prevPage").addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderTable(adminData.orders, currentPage);
+        }
+      });
+
+      document.getElementById("nextPage").addEventListener("click", () => {
+        if (currentPage < Math.ceil(adminData.orders.length / rowsPerPage)) {
+          currentPage++;
+          renderTable(adminData.orders, currentPage);
+        }
+      });
+
+      function sortTable(column) {
+        currentSort = { column, asc: currentSort.column === column ? !currentSort.asc : true };
+        adminData.orders.sort((a, b) => {
+          const valA = a[column].toString().toLowerCase();
+          const valB = b[column].toString().toLowerCase();
+          return currentSort.asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        });
+        saveData();
+        renderTable(adminData.orders, currentPage);
+      }
+
+      function openModal(title, order = null) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("orderModal").classList.remove("hidden");
+        document.getElementById("errorMessage").classList.add("hidden");
+        
+        if (order) {
+          document.getElementById("orderId").value = order.id;
+          document.getElementById("orderId").disabled = true;
+          document.getElementById("orderCustomer").value = order.customer;
+          document.getElementById("orderStatus").value = order.status;
+          document.getElementById("orderTotal").value = order.total.replace('$', '');
+          document.getElementById("orderDate").value = order.date;
+          editingOrderId = order.id;
+        } else {
+          document.getElementById("orderId").value = "";
+          document.getElementById("orderId").disabled = false;
+          document.getElementById("orderCustomer").value = "";
+          document.getElementById("orderStatus").value = "Pending";
+          document.getElementById("orderTotal").value = "";
+          document.getElementById("orderDate").value = "";
+          editingOrderId = null;
+        }
+      }
+
+      function closeModal() {
+        document.getElementById("orderModal").classList.add("hidden");
+        document.getElementById("errorMessage").classList.add("hidden");
+      }
+
+      document.getElementById("addOrder").addEventListener("click", () => openModal("Add Order"));
+      document.getElementById("cancelModal").addEventListener("click", closeModal);
+
+      function editOrder(id) {
+        const order = adminData.orders.find(o => o.id === id);
+        openModal("Edit Order", order);
+      }
+
+      function deleteOrder(id) {
+        if (confirm("Are you sure you want to delete this order?")) {
+          adminData.orders = adminData.orders.filter(o => o.id !== id);
+          saveData();
+          renderTable(adminData.orders, currentPage);
+        }
+      }
+
+      document.getElementById("saveOrder").addEventListener("click", () => {
+        const id = document.getElementById("orderId").value.trim();
+        const customer = document.getElementById("orderCustomer").value.trim();
+        const status = document.getElementById("orderStatus").value;
+        const total = document.getElementById("orderTotal").value.trim();
+        const date = document.getElementById("orderDate").value;
+        const errorMessage = document.getElementById("errorMessage");
+
+        if (!id || !customer || !total || !date) {
+          errorMessage.textContent = "Please fill in all required fields.";
+          errorMessage.classList.remove("hidden");
+          return;
+        }
+
+        if (!editingOrderId && adminData.orders.some(o => o.id === id)) {
+          errorMessage.textContent = "Order ID already exists.";
+          errorMessage.classList.remove("hidden");
+          return;
+        }
+
+        if (!/^\d+(\.\d{2})?$/.test(total)) {
+          errorMessage.textContent = "Total must be a valid amount (e.g., 100.00).";
+          errorMessage.classList.remove("hidden");
+          return;
+        }
+
+        const order = { id, customer, status, total: `$${total}`, date };
+
+        if (editingOrderId) {
+          const index = adminData.orders.findIndex(o => o.id === editingOrderId);
+          adminData.orders[index] = order;
+        } else {
+          adminData.orders.push(order);
+        }
+
+        saveData();
+        renderTable(adminData.orders, currentPage);
+        closeModal();
+      });
+
+      // Initialize
+      loadDarkMode();
+      setTimeout(() => renderTable(adminData.orders, currentPage), 1000);
+    </script>
+  </body>
+</html>
